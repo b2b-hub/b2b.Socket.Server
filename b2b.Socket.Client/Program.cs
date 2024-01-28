@@ -1,26 +1,64 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System;
+using System.Net.WebSockets;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace b2b.Socket.Client
 {
-    public class Program
+    internal class Program
     {
-        public static void Main(string[] args)
+        static async Task Main(string[] args)
         {
-            CreateHostBuilder(args).Build().Run();
-        }
+            Console.WriteLine("press enter to cont.....");
+            Console.ReadLine();
 
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
+
+            using (ClientWebSocket client = new ClientWebSocket())
+            {
+                Uri serviceUri = new Uri("localhost:5000/send");
+                var cTs = new CancellationTokenSource();
+                cTs.CancelAfter(TimeSpan.FromSeconds(120));
+
+                try
                 {
-                    webBuilder.UseStartup<Startup>();
-                });
+                    await client.ConnectAsync(serviceUri, cTs.Token);
+                    int n = 0;
+                    while (client.State == WebSocketState.Open)
+                    {
+                        Console.WriteLine("Enter message to send");
+                        string message = Console.ReadLine();
+                        if (!string.IsNullOrEmpty(message))
+                        {
+                            ArraySegment<byte> byteToSend = new ArraySegment<byte>(Encoding.UTF8.GetBytes(message));
+                            await client.SendAsync(byteToSend, WebSocketMessageType.Text, true, cTs.Token);
+                            var responseBuffer = new byte[1024];
+                            var offset = 0;
+                            var packet = 1024;
+                            while (true)
+                            {
+                                ArraySegment<byte> byteRecieved = new ArraySegment<byte>(responseBuffer, offset, packet);
+                                WebSocketReceiveResult response = await client.ReceiveAsync(byteRecieved, cTs.Token);
+                                var responseMessage = Encoding.UTF8.GetString(responseBuffer, offset, response.Count);
+                                Console.WriteLine($"{responseMessage}");
+
+                                if (response.EndOfMessage)
+                                {
+                                    break;
+                                }
+
+                            }
+                        }
+                    }
+
+                }
+                catch (WebSocketException ex)
+                {
+                    Console.WriteLine($"{ex.Message}");
+                }
+            }
+
+            Console.ReadLine();
+        }
     }
 }
