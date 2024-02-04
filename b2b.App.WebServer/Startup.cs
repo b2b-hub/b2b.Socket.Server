@@ -68,7 +68,8 @@ namespace b2b.Socket.Server
                 {
                     var msg = Encoding.UTF8.GetString(new ArraySegment<byte>(buffer, 0, result.Count));
                     Console.WriteLine($"Client says: {msg}");
-                    await socket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes($"Server says {DateTime.UtcNow:f}")), 
+                    Thread.Sleep(5500);
+                    await socket.SendAsync(new ArraySegment<byte>(Encoding.UTF8.GetBytes($"End processing {DateTime.UtcNow:f}\n")), 
                                             result.MessageType, result.EndOfMessage, CancellationToken.None);
                     result = await socket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
                 }

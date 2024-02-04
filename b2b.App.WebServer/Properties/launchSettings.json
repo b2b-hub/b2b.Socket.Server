@@ -17,6 +17,7 @@
     },
     "Docker": {
       "commandName": "Docker",
+      "applicationUrl": "https://localhost:5010",
       "launchBrowser": true,
       "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}",
       "publishAllPorts": true,

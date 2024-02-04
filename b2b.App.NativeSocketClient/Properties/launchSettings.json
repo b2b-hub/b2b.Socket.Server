@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "b2b.Socket.ClientNativeSocket": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}

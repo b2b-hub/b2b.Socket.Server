@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace b2b.Socket.Server
+namespace b2b.App.Server
 {
     public class Program
     {

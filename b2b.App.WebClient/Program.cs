@@ -1,22 +1,23 @@
 ﻿using System;
+using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace b2b.Socket.Client
+namespace b2b.App.Client
 {
-    internal class Program
+    public class Program
     {
         static async Task Main(string[] args)
         {
             Console.WriteLine("press enter to cont.....");
             Console.ReadLine();
 
-
+  
             using (ClientWebSocket client = new ClientWebSocket())
             {
-                Uri serviceUri = new Uri("localhost:5000/send");
+                Uri serviceUri = new Uri("ws://localhost:32772/send");
                 var cTs = new CancellationTokenSource();
                 cTs.CancelAfter(TimeSpan.FromSeconds(120));
 
